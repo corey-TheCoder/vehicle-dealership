@@ -55,7 +55,7 @@ public class VehicleService {
         vehicleToUpdate.setVin(vehicle.getVin());
         vehicleToUpdate.setYear(vehicle.getYear());
         vehicleRepository.save(vehicleToUpdate);
-        return vehicleToUpdate;
+        return vehicleToUpdate;f
     }
     //delete vehicle
     public boolean delete(long id){
