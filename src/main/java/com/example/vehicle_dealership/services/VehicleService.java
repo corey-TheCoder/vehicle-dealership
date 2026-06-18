@@ -5,26 +5,24 @@ import com.example.vehicle_dealership.repositories.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class VehicleService {
+    private VehicleRepository vehicleRepository;
     //depency inject
     @Autowired
-    private VehicleRepository vehicleRepository;
+    public VehicleService(VehicleRepository vehicleRepository){
+        this.vehicleRepository=vehicleRepository;
+    }
 
     //getAllVehicles
     public List<Vehicle> getAllVehicles() {
         List<Vehicle> vehicleList = vehicleRepository.findAll();
         return vehicleList;
     }
-
-    //search movies
-    public List<Vehicle> searchVehicles(String vin) {
-        return vehicleRepository.findByTitleContainingIgnoreCase(vin);
-    }
-
     //getVehiclesById
     public Optional<Vehicle> getVehicleById(Long id) {
         var vehicle = vehicleRepository.findById(id);
@@ -34,14 +32,14 @@ public class VehicleService {
     //addVehicle
     public Vehicle create(Vehicle vehicle) {
         Vehicle newVehicle = vehicleRepository.save(vehicle);
-        return newVehicle;
+        return vehicleRepository.save(vehicle);
     }
 
     //updateVehicle
     public Vehicle update(Long id, Vehicle vehicle) {
         //search for movie with said ID
         Optional<Vehicle> updateVehicle = vehicleRepository.findById(id);
-        if (!updateVehicle.isEmpty()) {
+        if (updateVehicle.isEmpty()) {
             return null;
         }
         //we are now going to update everything to the new values
@@ -55,7 +53,7 @@ public class VehicleService {
         vehicleToUpdate.setVin(vehicle.getVin());
         vehicleToUpdate.setYear(vehicle.getYear());
         vehicleRepository.save(vehicleToUpdate);
-        return vehicleToUpdate;f
+        return vehicleToUpdate;
     }
     //delete vehicle
     public boolean delete(long id){
@@ -66,4 +64,11 @@ public class VehicleService {
         vehicleRepository.delete(vehicleToDelete.get());
         return true;
     }
+    public List<Vehicle> getVehiclesByPrice(BigDecimal minPrice, BigDecimal maxPrice) {
+        if (minPrice != null && maxPrice != null) {
+            return vehicleRepository.findByPriceBetween(minPrice, maxPrice);
+        }
+        return vehicleRepository.findAll();
+    }
+
 }
